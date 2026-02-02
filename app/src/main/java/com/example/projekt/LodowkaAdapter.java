@@ -5,27 +5,37 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.projekt.databinding.WierszLodowkiBinding; // Ważne!
+import com.example.projekt.databinding.WierszLodowkiBinding;
 import java.util.List;
 
 public class LodowkaAdapter extends RecyclerView.Adapter<LodowkaAdapter.ViewHolder> {
 
     private List<Produkt> mData;
     private LayoutInflater mInflater;
-    private OnItemClickListener listener; // Do klikania
+
+    // Listenery dla kliknięć
+    private OnItemClickListener listener;
+    private OnDeleteClickListener deleteListener; // NOWY
 
     public LodowkaAdapter(Context context, List<Produkt> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
 
-    // Interfejs do klikania w produkt (dla DetailsActivity)
+    // Interfejsy
     public interface OnItemClickListener {
         void onItemClick(Produkt produkt);
+    }
+    public interface OnDeleteClickListener { // NOWY
+        void onDeleteClick(Produkt produkt);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) { // NOWY
+        this.deleteListener = listener;
     }
 
     @NonNull
@@ -41,9 +51,14 @@ public class LodowkaAdapter extends RecyclerView.Adapter<LodowkaAdapter.ViewHold
         holder.binding.tvPolka.setText(produkt.polka);
         holder.binding.tvProdukt.setText(produkt.nazwa);
 
-        // Obsługa kliknięcia
+        // Kliknięcie w cały wiersz (szczegóły)
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onItemClick(produkt);
+        });
+
+        // Kliknięcie w przycisk usuwania (NOWE)
+        holder.binding.btnUsun.setOnClickListener(v -> {
+            if (deleteListener != null) deleteListener.onDeleteClick(produkt);
         });
     }
 
@@ -52,7 +67,6 @@ public class LodowkaAdapter extends RecyclerView.Adapter<LodowkaAdapter.ViewHold
         return mData.size();
     }
 
-    // TO JEST KLUCZOWE - bez tego lista się nie odświeża
     public void setDane(List<Produkt> noweDane) {
         this.mData = noweDane;
         notifyDataSetChanged();

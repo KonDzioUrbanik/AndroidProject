@@ -24,6 +24,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.projekt.databinding.FragmentListaBinding;
 
+import java.util.ArrayList; // Dodano import dla ArrayList
+
 public class ListaFragment extends Fragment {
 
     private FragmentListaBinding binding;
@@ -32,6 +34,7 @@ public class ListaFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Użycie ViewBinding do napompowania widoku
         binding = FragmentListaBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -40,46 +43,56 @@ public class ListaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Inicjalizacja ViewModel (Instrukcja 14)
         viewModel = new ViewModelProvider(requireActivity()).get(LodowkaViewModel.class);
 
-
-        adapter = new LodowkaAdapter(requireContext(), new java.util.ArrayList<>());
+        // Inicjalizacja Adaptera i listy (Instrukcja 12)
+        adapter = new LodowkaAdapter(requireContext(), new ArrayList<>());
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(adapter);
 
-
+        // Obserwowanie zmian w bazie danych (LiveData)
         viewModel.getProdukty().observe(getViewLifecycleOwner(), produkty -> {
             adapter.setDane(produkty);
         });
 
-
+        // KLIKNIĘCIE 1: Otwieranie szczegółów (Instrukcja 4)
         adapter.setOnItemClickListener(produkt -> {
             Intent intent = new Intent(requireContext(), DetailsActivity.class);
-            intent.putExtra("NAZWA", produkt.nazwa); // Inst 4: putExtra
+            intent.putExtra("NAZWA", produkt.nazwa);
             intent.putExtra("POLKA", produkt.polka);
             startActivity(intent);
         });
 
+        // KLIKNIĘCIE 2: Usuwanie produktu (NOWOŚĆ)
+        adapter.setOnDeleteClickListener(produkt -> {
+            // Wywołujemy metodę usuwania z ViewModelu
+            viewModel.usunProdukt(produkt);
+        });
+
+        // Obsługa przycisku dodawania (FAB)
         binding.fabDodaj.setOnClickListener(v -> pokazDialogDodawania());
 
-
+        // Obsługa przycisku ustawień
         binding.btnUstawienia.setOnClickListener(v -> {
             startActivity(new Intent(requireContext(), SettingsActivity.class));
         });
 
+        // Utworzenie kanału powiadomień (wymagane dla Androida 8+)
         createNotificationChannel();
     }
 
+    // Metoda wyświetlająca Dialog (Instrukcja 10) ze Spinnerem (Instrukcja 13)
     private void pokazDialogDodawania() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Nowy produkt");
 
-
+        // Własny layout dialogu
         View view = getLayoutInflater().inflate(R.layout.dialog_dodaj, null);
         final EditText etNazwa = view.findViewById(R.id.etNazwaDialog);
         final Spinner spinnerPolka = view.findViewById(R.id.spinnerPolka);
 
-
+        // Konfiguracja Spinnera
         String[] polki = {"Górna", "Środkowa", "Dolna", "Szuflada"};
         ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_item, polki);
@@ -91,22 +104,28 @@ public class ListaFragment extends Fragment {
         builder.setPositiveButton("Dodaj", (dialog, which) -> {
             String nazwa = etNazwa.getText().toString();
             String polka = spinnerPolka.getSelectedItem().toString();
+
+            // Dodanie do bazy
             viewModel.dodajProdukt(nazwa, polka);
+
+            // Wysłanie powiadomienia (jeśli włączone w ustawieniach)
             wyslijPowiadomienie(nazwa);
         });
         builder.setNegativeButton("Anuluj", null);
         builder.show();
     }
 
-
+    // Obsługa powiadomień (Instrukcja 11)
     private void wyslijPowiadomienie(String nazwaProduktu) {
-
+        // Sprawdź czy użytkownik chce powiadomienia (SharedPreferences - Instrukcja 6)
         SharedPreferences prefs = requireContext().getSharedPreferences("UstawieniaLodowki", Context.MODE_PRIVATE);
         boolean czyPowiadamiac = prefs.getBoolean("powiadomienia", true);
+
         if (!czyPowiadamiac) return;
 
+        // Sprawdzenie uprawnień (Android 13+)
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-
+            // W prawdziwej aplikacji tutaj poprosilibyśmy o uprawnienia
             return;
         }
 
@@ -123,7 +142,9 @@ public class ListaFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("LODOWKA_CHANNEL", "Powiadomienia Lodówki", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = requireContext().getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
         }
     }
 }

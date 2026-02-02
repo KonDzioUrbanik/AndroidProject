@@ -3,24 +3,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="15dp"
+    android:padding="10dp"
     android:layout_margin="5dp"
-    android:background="#E1F5FE">
+    android:background="#E1F5FE"
+    android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/tvPolka"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textStyle="bold"
-        android:text="Półka"
-        android:textSize="16sp"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvProdukt"
-        android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tvProdukt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nazwa Produktu"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvPolka"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Półka"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnUsun"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="Nazwa"
-        android:textSize="18sp"/>
+        android:src="@android:drawable/ic_menu_delete"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="10dp"
+        android:contentDescription="Usuń" />
+
 </LinearLayout>

@@ -1,39 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.fragment.app.FragmentContainerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <EditText
-        android:id="@+id/etNazwa"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Co wkładasz? (np. Masło)" />
-
-    <EditText
-        android:id="@+id/etPolka"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Która półka? (np. 1, Górna)" />
-
-    <Button
-        android:id="@+id/btnDodaj"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Włóż do lodówki" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ZAWARTOŚĆ LODÓWKI:"
-        android:layout_marginTop="20dp"
-        android:textStyle="bold"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvLodowka"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"/>
-
-</LinearLayout>
+    android:name="com.example.projekt.ListaFragment" />
