@@ -17,8 +17,7 @@ public class LodowkaViewModel extends AndroidViewModel {
     public LodowkaViewModel(@NonNull Application application) {
         super(application);
 
-        // POPRAWKA: Dodano .fallbackToDestructiveMigration()
-        // To naprawia błąd, gdy na telefonie jest stara wersja bazy i blokuje dodawanie
+
         db = Room.databaseBuilder(application,
                         BazaLodowka.class, "baza-lodowka")
                 .fallbackToDestructiveMigration()
@@ -32,13 +31,13 @@ public class LodowkaViewModel extends AndroidViewModel {
     }
 
     public void dodajProdukt(String nazwa, String polka) {
-        if (nazwa == null || nazwa.isEmpty()) return; // Zabezpieczenie przed pustym
+        if (nazwa == null || nazwa.isEmpty()) return;
 
         CompletableFuture.runAsync(() -> {
-            // Dodawanie w tle
+
             db.produktDao().dodajProdukt(new Produkt(nazwa, polka));
         }).thenRun(() -> {
-            // Po dodaniu od razu odśwież
+
             odswiezListe();
         });
     }
@@ -52,7 +51,7 @@ public class LodowkaViewModel extends AndroidViewModel {
     private void odswiezListe() {
         CompletableFuture.supplyAsync(() -> db.produktDao().pobierzWszystkie())
                 .thenAccept(lista -> {
-                    // postValue wysyła dane z tła do głównego wątku (UI)
+
                     produktyLive.postValue(lista);
                 });
     }

@@ -15,10 +15,10 @@ public class Produkt {
     @ColumnInfo(name = "polka")
     public String polka;
 
-    // Konstruktor pusty (wymagany przez Room)
+
     public Produkt() {}
 
-    // Konstruktor dla nas
+
     public Produkt(String nazwa, String polka) {
         this.nazwa = nazwa;
         this.polka = polka;

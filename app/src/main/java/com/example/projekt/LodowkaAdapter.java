@@ -13,7 +13,6 @@ public class LodowkaAdapter extends RecyclerView.Adapter<LodowkaAdapter.ViewHold
     private List<Produkt> mData;
     private LayoutInflater mInflater;
 
-    // Listenery dla kliknięć
     private OnItemClickListener listener;
     private OnDeleteClickListener deleteListener; // NOWY
 
@@ -26,7 +25,7 @@ public class LodowkaAdapter extends RecyclerView.Adapter<LodowkaAdapter.ViewHold
     public interface OnItemClickListener {
         void onItemClick(Produkt produkt);
     }
-    public interface OnDeleteClickListener { // NOWY
+    public interface OnDeleteClickListener {
         void onDeleteClick(Produkt produkt);
     }
 
@@ -34,7 +33,7 @@ public class LodowkaAdapter extends RecyclerView.Adapter<LodowkaAdapter.ViewHold
         this.listener = listener;
     }
 
-    public void setOnDeleteClickListener(OnDeleteClickListener listener) { // NOWY
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
         this.deleteListener = listener;
     }
 
@@ -51,12 +50,11 @@ public class LodowkaAdapter extends RecyclerView.Adapter<LodowkaAdapter.ViewHold
         holder.binding.tvPolka.setText(produkt.polka);
         holder.binding.tvProdukt.setText(produkt.nazwa);
 
-        // Kliknięcie w cały wiersz (szczegóły)
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onItemClick(produkt);
         });
 
-        // Kliknięcie w przycisk usuwania (NOWE)
+
         holder.binding.btnUsun.setOnClickListener(v -> {
             if (deleteListener != null) deleteListener.onDeleteClick(produkt);
         });
